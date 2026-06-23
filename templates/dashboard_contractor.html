@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-6">
+    <h2 class="text-xl font-black">Welcome, {{ user.name }}</h2>
+    <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Contractor Dashboard</p>
+</div>
+
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6">
+    <h3 class="text-lg font-black mb-4 text-slate-800 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-blue-600"></i> Post a Daily Job</h3>
+    <form action="/post_gig" method="POST" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Title / Work</label>
+                <input type="text" name="title" placeholder="e.g., Wall Painting" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Skill Category</label>
+                <select name="skill_required" class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none bg-white">
+                    <option value="Construction">Construction/Labour</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Painting">Painting</option>
+                </select>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Daily Wage (₹)</label>
+                <input type="number" name="wage" placeholder="550" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">No. of Workers</label>
+                <input type="number" name="workers_needed" placeholder="3" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none">
+            </div>
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Work Address / Location</label>
+            <input type="text" name="location" placeholder="Exact crossing or site location" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none">
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Short Description (Optional)</label>
+            <textarea name="description" rows="2" placeholder="Describe instructions briefly..." class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white font-black py-3 rounded-xl shadow-xs hover:bg-blue-700 transition tracking-wide text-sm">POST TODAY'S GIG</button>
+    </form>
+</div>
+
+<h3 class="text-lg font-black text-slate-700 mb-3"><i class="fa-solid fa-user-check text-amber-500"></i> Workers Requesting Work</h3>
+<div class="space-y-3 mb-6">
+    {% if not applications %}
+        <p class="text-slate-400 font-medium text-xs text-center py-3 bg-white rounded-xl border">No pending applications right now.</p>
+    {% endif %}
+    {% for app in applications %}
+    <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-100 flex justify-between items-center">
+        <div>
+            <h4 class="font-bold text-slate-800">{{ app.worker_name }}</h4>
+            <p class="text-xs font-semibold text-slate-500">Applying for: <span class="text-slate-700 font-bold">{{ app.title }}</span></p>
+            <p class="text-xs text-blue-600 font-bold mt-1">Skill: {{ app.skills }}</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="/handle_applicant/{{ app.app_id }}/accept" class="bg-green-600 text-white p-2 px-3 rounded-lg font-black text-xs hover:bg-green-700 transition shadow-xs">Accept</a>
+            <a href="/handle_applicant/{{ app.app_id }}/reject" class="bg-slate-200 text-slate-700 p-2 px-3 rounded-lg font-black text-xs hover:bg-slate-300 transition">Skip</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h3 class="text-lg font-black text-slate-700 mb-3"><i class="fa-solid fa-list text-slate-500"></i> My Active Postings</h3>
+<div class="space-y-3">
+    {% for gig in gigs %}
+    <div class="bg-white p-4 rounded-xl border shadow-xs flex justify-between items-center">
+        <div>
+            <h4 class="font-black text-slate-800">{{ gig.title }} (₹{{ gig.wage }})</h4>
+            <p class="text-xs text-slate-500 font-bold"><i class="fa-solid fa-location-dot"></i> {{ gig.location }}</p>
+            <p class="text-xs text-slate-400 mt-1 font-bold">Status: <span class="{% if gig.status == 'Open' %}text-green-600{% else %}text-slate-500{% endif %}">{{ gig.status }}</span> • Need: {{ gig.workers_needed }} workers</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

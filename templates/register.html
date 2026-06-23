@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <h2 class="text-2xl font-black mb-6 text-center text-slate-800">Create Account</h2>
+    <form action="/register" method="POST" class="space-y-4">
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Are you looking for Work or Hiring?</label>
+            <select name="role" id="roleSelect" class="w-full p-3 rounded-xl border-2 border-slate-200 font-medium focus:border-blue-500 outline-none" onchange="toggleWorkerFields()">
+                <option value="Worker">Worker (Looking for daily jobs)</option>
+                <option value="Contractor">Contractor / Employer (Hiring workers)</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Full Name</label>
+            <input type="text" name="name" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Phone Number</label>
+            <input type="tel" name="phone" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Your Location / Local Area</label>
+            <input type="text" name="location" placeholder="e.g. Sector 62, Noida" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+        </div>
+
+        <div id="workerFields" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Primary Skill</label>
+                <select name="skills" class="w-full p-3 rounded-xl border-2 border-slate-200 font-medium focus:border-blue-500 outline-none">
+                    <option value="Construction">Construction / Labour</option>
+                    <option value="Plumbing">Plumbing</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Painting">Painting</option>
+                    <option value="Carpentry">Carpentry</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Expected Daily Wage (₹)</label>
+                <input type="number" name="daily_rate" value="500" class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Email Address</label>
+            <input type="email" name="email" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+        </div>
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Password</label>
+            <input type="password" name="password" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white font-bold p-4 rounded-xl shadow-md hover:bg-blue-700 transition">Register Now</button>
+    </form>
+    <p class="text-center mt-4 text-sm font-medium text-slate-600">Already have an account? <a href="/login" class="text-blue-600 font-bold">Login</a></p>
+</div>
+
+<script>
+function toggleWorkerFields() {
+    const role = document.getElementById('roleSelect').value;
+    document.getElementById('workerFields').style.display = (role === 'Worker') ? 'block' : 'none';
+}
+</script>
+{% endblock %}
