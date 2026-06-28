@@ -79,9 +79,12 @@ def simulate_ivr_voice_call(phone_number, worker_name, gig_title):
 
 @app.route('/')
 def index():
+    # If a user is already logged in, send them to their dashboard
     if 'user_id' in session:
         return redirect(url_for('dashboard'))
-    return redirect(url_for('login'))
+    
+    # Otherwise, show the beautiful TaskRabbit-style informational homepage
+    return render_template('home.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
