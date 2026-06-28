@@ -1,63 +1,72 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-    <h2 class="text-2xl font-black mb-6 text-center text-slate-800">Create Account</h2>
+<div class="max-w-lg mx-auto bg-white border border-stone-200 rounded-3xl p-8 shadow-xl">
+    <div class="text-center mb-6">
+        <h2 class="text-3xl font-black text-stone-900 tracking-tight">Create Account</h2>
+        <p class="text-stone-500 text-sm mt-1">Join the ROZGAAR real-time talent routing network</p>
+    </div>
+
     <form action="/register" method="POST" class="space-y-4">
         <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Are you looking for Work or Hiring?</label>
-            <select name="role" id="roleSelect" class="w-full p-3 rounded-xl border-2 border-slate-200 font-medium focus:border-blue-500 outline-none" onchange="toggleWorkerFields()">
-                <option value="Worker">Worker (Looking for daily jobs)</option>
-                <option value="Contractor">Contractor / Employer (Hiring workers)</option>
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Select Account Profile Type</label>
+            <select name="role" id="roleDropdown" class="w-full p-3.5 rounded-xl border-2 border-stone-200 font-bold text-stone-800 focus:border-[#1b4d3e] outline-none bg-stone-50" onchange="toggleFormContext()">
+                <option value="Worker">Tasker / Gig Seeker (I want to perform daily tasks)</option>
+                <option value="Contractor">Employer / Contractor (I want to hire talent)</option>
             </select>
         </div>
-        <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Full Name</label>
-            <input type="text" name="name" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
-        </div>
-        <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Phone Number</label>
-            <input type="tel" name="phone" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
-        </div>
-        <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Your Location / Local Area</label>
-            <input type="text" name="location" placeholder="e.g. Sector 62, Noida" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Full Name</label>
+                <input type="text" name="name" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Mobile Number</label>
+                <input type="tel" name="phone" placeholder="e.g., +91XXXX" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+            </div>
         </div>
 
-        <div id="workerFields" class="space-y-4">
+        <div>
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Primary Work Location / Area</label>
+            <input type="text" name="location" placeholder="e.g. Badarpur, New Delhi" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+        </div>
+
+        <div id="dynamicTaskerBox" class="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-4">
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Primary Skill</label>
-                <select name="skills" class="w-full p-3 rounded-xl border-2 border-slate-200 font-medium focus:border-blue-500 outline-none">
-                    <option value="Construction">Construction / Labour</option>
-                    <option value="Plumbing">Plumbing</option>
-                    <option value="Electrician">Electrician</option>
-                    <option value="Painting">Painting</option>
-                    <option value="Carpentry">Carpentry</option>
+                <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1">Core Capability Field</label>
+                <select name="skills" class="w-full p-3 rounded-xl border border-stone-300 bg-white font-medium outline-none">
+                    <option value="General Furniture Assembly">General Furniture Assembly</option>
+                    <option value="IKEA Assembly">IKEA Furniture Assembly</option>
+                    <option value="Minor Plumbing Repairs">Minor Plumbing Repairs</option>
+                    <option value="Electrical Help">Electrical Help / Wiring</option>
+                    <option value="Home & Apartment Cleaning">Home & Apartment Cleaning</option>
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Expected Daily Wage (₹)</label>
-                <input type="number" name="daily_rate" value="500" class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+                <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1">Expected Daily Comp Target (₹)</label>
+                <input type="number" name="daily_rate" value="650" class="w-full p-3 border border-stone-300 rounded-xl outline-none">
             </div>
         </div>
 
-        <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Email Address</label>
-            <input type="email" name="email" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
-        </div>
-        <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Password</label>
-            <input type="password" name="password" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+        <div class="border-t border-stone-100 pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Email Address</label>
+                <input type="email" name="email" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Security Password</label>
+                <input type="password" name="password" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+            </div>
         </div>
 
-        <button type="submit" class="w-full bg-blue-600 text-white font-bold p-4 rounded-xl shadow-md hover:bg-blue-700 transition">Register Now</button>
+        <button type="submit" class="w-full bg-[#1b4d3e] text-white font-black p-4 rounded-xl shadow-md hover:bg-emerald-900 transition tracking-wide text-sm mt-4">Complete Registration</button>
     </form>
-    <p class="text-center mt-4 text-sm font-medium text-slate-600">Already have an account? <a href="/login" class="text-blue-600 font-bold">Login</a></p>
 </div>
 
 <script>
-function toggleWorkerFields() {
-    const role = document.getElementById('roleSelect').value;
-    document.getElementById('workerFields').style.display = (role === 'Worker') ? 'block' : 'none';
+function toggleFormContext() {
+    const selector = document.getElementById('roleDropdown').value;
+    document.getElementById('dynamicTaskerBox').style.display = (selector === 'Worker') ? 'block' : 'none';
 }
 </script>
 {% endblock %}
