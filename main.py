@@ -176,7 +176,7 @@ def dashboard():
         ''', (user['id'],)).fetchall()
         
         my_schedule = conn.execute('''
-            SELECT a.status as app_status, a.ivr_confirmed, g.*, u.name as contractor_name, u.phone as contractor_phone
+            SELECT a.status as app_status, a.ivr_confirmed, g.*, u.name as contractor_name, u.phone as contractor_phone}
             FROM applications a
             JOIN gigs g ON a.gig_id = g.id
             JOIN users u ON g.contractor_id = u.id
