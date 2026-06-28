@@ -1,80 +1,103 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="mb-6">
-    <h2 class="text-xl font-black">Welcome, {{ user.name }}</h2>
-    <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Contractor Dashboard</p>
-</div>
-
-<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6">
-    <h3 class="text-lg font-black mb-4 text-slate-800 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-blue-600"></i> Post a Daily Job</h3>
-    <form action="/post_gig" method="POST" class="space-y-3">
-        <div class="grid grid-cols-2 gap-3">
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Job Title / Work</label>
-                <input type="text" name="title" placeholder="e.g., Wall Painting" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none">
-            </div>
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Skill Category</label>
-                <select name="skill_required" class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none bg-white">
-                    <option value="Construction">Construction/Labour</option>
-                    <option value="Plumbing">Plumbing</option>
-                    <option value="Electrician">Electrician</option>
-                    <option value="Painting">Painting</option>
-                </select>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Daily Wage (₹)</label>
-                <input type="number" name="wage" placeholder="550" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none">
-            </div>
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">No. of Workers</label>
-                <input type="number" name="workers_needed" placeholder="3" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none">
-            </div>
-        </div>
-        <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Work Address / Location</label>
-            <input type="text" name="location" placeholder="Exact crossing or site location" required class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none">
-        </div>
-        <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Short Description (Optional)</label>
-            <textarea name="description" rows="2" placeholder="Describe instructions briefly..." class="w-full p-2.5 rounded-xl border border-slate-200 text-sm outline-none"></textarea>
-        </div>
-        <button type="submit" class="w-full bg-blue-600 text-white font-black py-3 rounded-xl shadow-xs hover:bg-blue-700 transition tracking-wide text-sm">POST TODAY'S GIG</button>
-    </form>
-</div>
-
-<h3 class="text-lg font-black text-slate-700 mb-3"><i class="fa-solid fa-user-check text-amber-500"></i> Workers Requesting Work</h3>
-<div class="space-y-3 mb-6">
-    {% if not applications %}
-        <p class="text-slate-400 font-medium text-xs text-center py-3 bg-white rounded-xl border">No pending applications right now.</p>
-    {% endif %}
-    {% for app in applications %}
-    <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-100 flex justify-between items-center">
-        <div>
-            <h4 class="font-bold text-slate-800">{{ app.worker_name }}</h4>
-            <p class="text-xs font-semibold text-slate-500">Applying for: <span class="text-slate-700 font-bold">{{ app.title }}</span></p>
-            <p class="text-xs text-blue-600 font-bold mt-1">Skill: {{ app.skills }}</p>
-        </div>
-        <div class="flex gap-2">
-            <a href="/handle_applicant/{{ app.app_id }}/accept" class="bg-green-600 text-white p-2 px-3 rounded-lg font-black text-xs hover:bg-green-700 transition shadow-xs">Accept</a>
-            <a href="/handle_applicant/{{ app.app_id }}/reject" class="bg-slate-200 text-slate-700 p-2 px-3 rounded-lg font-black text-xs hover:bg-slate-300 transition">Skip</a>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <div class="space-y-6">
+        <div class="bg-white border border-stone-200 rounded-3xl p-6 shadow-md relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-[#1b4d3e]"></div>
+            <h3 class="text-xl font-black text-stone-900 tracking-tight mb-4 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-[#1b4d3e]"></i> Post a Task</h3>
+            
+            <form action="/post_gig" method="POST" class="space-y-3.5">
+                <div>
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Task Name</label>
+                    <input type="text" name="title" placeholder="e.g., IKEA Bookshelf Assembly" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Task Category</label>
+                    <select name="skill_required" class="w-full p-3 border border-stone-300 rounded-xl bg-white text-sm outline-none">
+                        <option value="General Furniture Assembly">General Furniture Assembly</option>
+                        <option value="IKEA Assembly">IKEA Furniture Assembly</option>
+                        <option value="Minor Plumbing Repairs">Minor Plumbing Repairs</option>
+                        <option value="Electrical Help">Electrical Help</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Budget Target (₹)</label>
+                        <input type="number" name="wage" placeholder="600" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Quantity Needed</label>
+                        <input type="number" name="workers_needed" placeholder="1" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Work Site Address</label>
+                    <input type="text" name="location" placeholder="Street Name, Area, City" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Instructions / Description</label>
+                    <textarea name="description" rows="2" placeholder="Briefly detail specialized tool requirements..." class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-[#1b4d3e] text-white font-bold py-3.5 rounded-xl shadow-xs hover:bg-emerald-900 transition tracking-wide text-xs uppercase">Post Active Listing</button>
+            </form>
         </div>
     </div>
-    {% endfor %}
-</div>
 
-<h3 class="text-lg font-black text-slate-700 mb-3"><i class="fa-solid fa-list text-slate-500"></i> My Active Postings</h3>
-<div class="space-y-3">
-    {% for gig in gigs %}
-    <div class="bg-white p-4 rounded-xl border shadow-xs flex justify-between items-center">
+    <div class="lg:col-span-2 space-y-6">
         <div>
-            <h4 class="font-black text-slate-800">{{ gig.title }} (₹{{ gig.wage }})</h4>
-            <p class="text-xs text-slate-500 font-bold"><i class="fa-solid fa-location-dot"></i> {{ gig.location }}</p>
-            <p class="text-xs text-slate-400 mt-1 font-bold">Status: <span class="{% if gig.status == 'Open' %}text-green-600{% else %}text-slate-500{% endif %}">{{ gig.status }}</span> • Need: {{ gig.workers_needed }} workers</p>
+            <h2 class="text-2xl font-black text-stone-900 tracking-tight">Active Inbound Applicants</h2>
+            <p class="text-xs text-stone-500 font-bold uppercase tracking-wider text-emerald-700 mt-0.5"><i class="fa-solid fa-bolt"></i> Refactored Priority Engine: Highest-Rated Taskers are auto-sorted to the top</p>
+        </div>
+
+        <div class="space-y-3">
+            {% if not applications %}
+                <div class="bg-white p-6 border border-stone-200 rounded-2xl text-center shadow-xs">
+                    <p class="text-stone-400 font-semibold text-xs">No pending IVR-Verified applications awaiting your review cycle.</p>
+                </div>
+            {% endif %}
+            
+            {% for app in applications %}
+            <div class="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs flex justify-between items-center relative overflow-hidden">
+                {% if loop.index == 1 and app.worker_rating >= 4.5 %}
+                <div class="absolute top-0 right-0 bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-3 py-0.5 shadow-xs">Top Rated Option</div>
+                {% endif %}
+                
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h4 class="font-bold text-stone-900 text-base">{{ app.worker_name }}</h4>
+                        <span class="bg-amber-50 text-amber-900 text-[10px] px-1.5 py-0.5 rounded border border-amber-200 font-black flex items-center gap-0.5">
+                            <i class="fa-solid fa-star text-amber-500"></i> {{ app.worker_rating }}
+                        </span>
+                    </div>
+                    <p class="text-xs text-stone-500 font-medium mt-1">Applying for job profile: <span class="text-stone-800 font-bold">{{ app.title }}</span></p>
+                    <p class="text-xs text-blue-600 font-bold mt-0.5">Primary Capability: {{ app.skills }}</p>
+                    
+                    {% if app.ivr_confirmed == 1 %}
+                    <span class="inline-block mt-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md"><i class="fa-solid fa-phone-volume"></i> Verified via Outbound IVR System Call</span>
+                    {% endif %}
+                </div>
+                <div class="flex gap-2">
+                    <a href="/handle_applicant/{{ app.app_id }}/accept" class="bg-emerald-700 text-white p-2.5 px-4 rounded-full font-bold text-xs hover:bg-emerald-900 transition shadow-xs">Accept Option</a>
+                    <a href="/handle_applicant/{{ app.app_id }}/reject" class="bg-stone-100 text-stone-600 p-2.5 px-4 rounded-full font-bold text-xs hover:bg-stone-200 transition">Skip</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3 class="text-lg font-bold text-stone-900 tracking-tight pt-4 border-t border-stone-200"><i class="fa-solid fa-folder-open text-stone-400"></i> Active Tasking History</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for gig in gigs %}
+            <div class="bg-white border border-stone-200 p-4 rounded-xl shadow-xs">
+                <h4 class="font-bold text-stone-900 text-sm">{{ gig.title }}</h4>
+                <p class="text-xs text-stone-400 font-bold mt-1"><i class="fa-solid fa-location-dot"></i> {{ gig.location }}</p>
+                <div class="mt-3 flex justify-between items-center text-[11px] font-bold">
+                    <span class="text-stone-500">Allocation Goal: {{ gig.workers_needed }} spot(s)</span>
+                    <span class="{% if gig.status == 'Open' %}text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded{% else %}text-stone-500 bg-stone-100 px-2 py-0.5 rounded{% endif %} uppercase tracking-wider">{{ gig.status }}</span>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
-    {% endfor %}
 </div>
 {% endblock %}
