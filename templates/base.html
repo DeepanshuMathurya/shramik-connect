@@ -3,31 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rozgaar Connect</title>
+    <title>Rozgaar - Book Trusted Help for Home Tasks</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .brand-green { color: #1b4d3e; }
+        .bg-brand-green { background-color: #1b4d3e; }
+        .border-brand-green { border-color: #1b4d3e; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
-    <nav class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" class="text-xl font-black tracking-wide flex items-center gap-2">
-                <i class="fa-solid fa-briefcase"></i> ROZGAAR
+<body class="bg-[#fcfbf9] text-slate-800 antialiased font-sans">
+    
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-black tracking-tight text-[#1b4d3e] flex items-center gap-2">
+                <i class="fa-solid fa-handshake-angle text-emerald-600"></i> rozgaar
             </a>
-            {% if session.get('user_id') %}
-            <div class="flex items-center gap-4">
-                <span class="text-xs bg-blue-700 px-2 py-1 rounded font-bold uppercase">{{ session.get('role') }}</span>
-                <a href="/logout" class="text-sm font-semibold text-blue-100 hover:text-white"><i class="fa-solid fa-right-from-bracket text-lg"></i></a>
+            <div class="flex items-center gap-6">
+                {% if session.get('user_id') %}
+                    <span class="text-xs font-bold bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-full border border-emerald-200 uppercase tracking-wider">{{ session.get('role') }} PORTAL</span>
+                    <a href="/logout" class="text-sm font-bold text-stone-600 hover:text-rose-600 transition flex items-center gap-1">
+                        <i class="fa-solid fa-power-off"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="/login" class="text-sm font-bold text-stone-700 hover:text-emerald-700">Sign up / Log in</a>
+                    <a href="/register" class="text-sm font-bold bg-[#1b4d3e] text-white px-4 py-2 rounded-full hover:bg-emerald-900 transition">Become a Tasker</a>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
     </nav>
 
-    <main class="max-w-md mx-auto p-4 pb-24">
+    <main class="max-w-5xl mx-auto px-6 py-10 min-h-[80vh]">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
-              <div class="p-3 mb-4 text-sm font-bold rounded-lg {% if category == 'success' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
-                {{ message }}
+              <div class="max-w-2xl mx-auto p-4 mb-6 text-sm font-bold rounded-xl border {% if category == 'success' %}bg-emerald-50 text-emerald-900 border-emerald-200{% else %}bg-amber-50 text-amber-900 border-amber-200{% endif %} flex items-center gap-2 shadow-xs">
+                <i class="fa-solid fa-circle-info text-base"></i>
+                <span>{{ message }}</span>
               </div>
             {% endfor %}
           {% endif %}
@@ -35,5 +47,26 @@
 
         {% block content %}{% endblock %}
     </main>
+
+    <footer class="bg-[#2b2a29] text-stone-400 py-12 border-t border-stone-800">
+        <div class="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+            <div>
+                <h4 class="text-white font-bold text-base mb-3">rozgaar Connect</h4>
+                <p class="text-stone-400 leading-relaxed max-w-xs">Built for high-fidelity real-time coordination connecting local execution experts with enterprise daily gig providers.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold text-base mb-3">Hackathon Sandbox Metrics</h4>
+                <div class="space-y-1 text-xs">
+                    <p class="text-emerald-400 font-mono"><i class="fa-solid fa-square-check"></i> IVR Voice Processing Enabled</p>
+                    <p class="text-emerald-400 font-mono"><i class="fa-solid fa-square-check"></i> Outbound WhatsApp Signals Active</p>
+                    <p class="text-emerald-400 font-mono"><i class="fa-solid fa-square-check"></i> Priority Rating Distribution Engine On</p>
+                </div>
+            </div>
+            <div class="text-xs text-stone-500">
+                <p>&copy; 2026 rozgaar Inc. Hackathon Deployment Sandbox. All platform elements mock-simulated inside environment console output logs.</p>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>
