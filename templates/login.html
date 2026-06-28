@@ -1,18 +1,38 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mt-8">
-    <h2 class="text-2xl font-black mb-6 text-center text-slate-800">Login to ROZGAAR</h2>
-    <form action="/login" method="POST" class="space-y-4">
+<div class="max-w-md mx-auto my-12 bg-white border border-stone-200 rounded-3xl p-8 shadow-xl relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-2 bg-[#1b4d3e]"></div>
+    
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-black text-stone-900 tracking-tight">Welcome Back</h2>
+        <p class="text-stone-500 text-sm mt-1 font-medium">Log in to manage your active daily operations</p>
+    </div>
+
+    <form action="/login" method="POST" class="space-y-5">
         <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Email Address</label>
-            <input type="email" name="email" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Email Address *</label>
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400"><i class="fa-regular fa-envelope"></i></span>
+                <input type="email" name="email" required placeholder="name@domain.com" class="w-full pl-10 p-3.5 rounded-xl border border-stone-300 font-medium bg-stone-50/50 focus:border-[#1b4d3e] focus:bg-white outline-none transition">
+            </div>
         </div>
         <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Password</label>
-            <input type="password" name="password" required class="w-full p-3 rounded-xl border-2 border-slate-200 outline-none focus:border-blue-500">
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Password *</label>
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400"><i class="fa-solid fa-lock"></i></span>
+                <input type="password" name="password" required placeholder="••••••••" class="w-full pl-10 p-3.5 rounded-xl border border-stone-300 font-medium bg-stone-50/50 focus:border-[#1b4d3e] focus:bg-white outline-none transition">
+            </div>
         </div>
-        <button type="submit" class="w-full bg-blue-600 text-white font-bold p-4 rounded-xl shadow-md hover:bg-blue-700 transition">Log In</button>
+
+        <button type="submit" class="w-full bg-[#1b4d3e] text-white font-bold p-4 rounded-xl shadow-md hover:bg-emerald-900 transition tracking-wide text-sm mt-2">Continue</button>
     </form>
-    <p class="text-center mt-4 text-sm font-medium text-slate-600">New to platform? <a href="/register" class="text-blue-600 font-bold">Register here</a></p>
+
+    <div class="relative flex py-4 items-center mt-6">
+        <div class="flex-grow border-t border-stone-200"></div>
+        <span class="flex-shrink mx-4 text-xs font-bold uppercase tracking-widest text-stone-400">OR</span>
+        <div class="flex-grow border-t border-stone-200"></div>
+    </div>
+
+    <p class="text-center text-sm font-semibold text-stone-600">New to platform? <a href="/register" class="text-emerald-700 font-extrabold hover:underline">Sign up instead</a></p>
 </div>
 {% endblock %}
