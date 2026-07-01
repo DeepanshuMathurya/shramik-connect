@@ -122,32 +122,6 @@ def register():
             return redirect(url_for('register'))
             
     return render_template('register.html')
-        
-        try:
-            with get_db() as conn:
-                conn.execute('''
-                    INSERT INTO users (email, password, role, name, phone, location, skills, daily_rate, rating)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 5.0)
-                ''', (email, password, role, name, phone, raw_location, skills, daily_rate))
-                conn.commit()
-            flash("Account registered successfully! Please sign in.", "success")
-            return redirect(url_for('login'))
-        except sqlite3.IntegrityError:
-            flash("This email address is already in use.", "danger")
-            return redirect(url_for('register'))
-        
-        try:
-            with get_db() as conn:
-                conn.execute('''
-                    INSERT INTO users (email, password, role, name, phone, location, skills, daily_rate, rating)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 5.0)
-                ''', (email, password, role, request.form['location'], skills, daily_rate))
-                conn.commit()
-            flash("Account registered successfully! Please sign in.", "success")
-            return redirect(url_for('login'))
-        except sqlite3.IntegrityError:
-            flash("This email address is already in use.", "danger")
-    return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -231,7 +205,7 @@ def post_gig():
     workers = request.form['workers_needed']
     loc = request.form['location'].strip().lower()
     exact_address = request.form['exact_address']
-    job_date = request.form['job_date'] # Retains selected calendar execution date
+    job_date = request.form['job_date']
     
     # Location Barrier Filter Validation
     is_valid = any(zone in loc for zone in VALID_LOCATIONS)
@@ -256,7 +230,6 @@ def apply_gig(gig_id):
     target_gig = conn.execute('SELECT * FROM gigs WHERE id = ?', (gig_id,)).fetchone()
     
     # --- DOUBLE BOOKING BLOCKING ENGINE MECHANICAL LAYER ---
-    # Look up if this worker already has a slot locked or pending on this exact calendar target date
     conflict = conn.execute('''
         SELECT g.title, g.job_date 
         FROM applications a
