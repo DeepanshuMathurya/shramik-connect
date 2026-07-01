@@ -1,15 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="max-w-lg mx-auto bg-white border border-stone-200 rounded-3xl p-8 shadow-xl">
+<div class="max-w-lg mx-auto bg-white border border-stone-200 rounded-3xl p-8 shadow-xl relative">
+    
     <div class="text-center mb-6">
         <h2 class="text-3xl font-black text-stone-900 tracking-tight">Create Account</h2>
         <p class="text-stone-500 text-sm mt-1">Join the ROZGAAR real-time talent routing network</p>
+        
+        <!-- Mobile-Friendly Play Help Button -->
+        <button type="button" onclick="playRegistrationGuide()" class="mt-4 bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-xs px-4 py-2.5 rounded-full hover:bg-emerald-100 transition flex items-center gap-2 mx-auto cursor-pointer shadow-xs">
+            <i class="fa-solid fa-volume-high text-sm animate-pulse"></i> 
+            <span>यहाँ दबाएं: फॉर्म भरने की जानकारी सुनें (Audio Guide)</span>
+        </button>
     </div>
 
     <form action="/register" method="POST" class="space-y-4">
         <div>
             <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">Select Account Profile Type</label>
-            <select name="role" id="roleDropdown" class="w-full p-3.5 rounded-xl border-2 border-stone-200 font-bold text-stone-800 focus:border-[#1b4d3e] outline-none bg-stone-50" onchange="toggleFormContext()">
+            <select name="role" id="roleDropdown" class="w-full p-3.5 rounded-xl border-2 border-stone-200 font-bold text-stone-800 focus:border-[#1b4d3e] outline-none bg-stone-50 cursor-pointer" onchange="toggleFormContext(); playRegistrationGuide();">
                 <option value="Worker">Tasker / Gig Seeker (I want to perform daily tasks)</option>
                 <option value="Contractor">Employer / Contractor (I want to hire talent)</option>
             </select>
@@ -18,23 +25,45 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Full Name</label>
-                <input type="text" name="name" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+                <input type="text" name="name" required placeholder="Enter name" class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
             </div>
             <div>
                 <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Mobile Number</label>
-                <input type="tel" name="phone" placeholder="e.g., +91XXXX" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+                <input type="tel" name="phone" placeholder="Active phone number" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
             </div>
         </div>
 
+        <!-- Location Selection Dropdown to Prevent Out-of-Bounds Fake Inputs -->
         <div>
-            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Primary Work Location / Area</label>
-            <input type="text" name="location" placeholder="e.g. Badarpur, New Delhi" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+            <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Primary Work Location Area (Delhi-NCR Hubs)</label>
+            <select name="location" required class="w-full p-3 border border-stone-300 bg-white rounded-xl outline-none focus:border-[#1b4d3e] font-medium cursor-pointer">
+                <option value="" disabled selected>Select your area...</option>
+                <option value="Badarpur">Badarpur</option>
+                <option value="Sarita Vihar">Sarita Vihar</option>
+                <option value="Jasola">Jasola</option>
+                <option value="Okhla">Okhla</option>
+                <option value="Nehru Place">Nehru Place</option>
+                <option value="Kashmere Gate">Kashmere Gate</option>
+                <option value="Shastri Park">Shastri Park</option>
+                <option value="Seelampur">Seelampur</option>
+                <option value="Shahdara">Shahdara</option>
+                <option value="Dilshad Garden">Dilshad Garden</option>
+                <option value="Connaught Place">Connaught Place</option>
+                <option value="Saket">Saket</option>
+                <option value="Dwarka">Dwarka</option>
+                <option value="Rohini">Rohini</option>
+                <option value="Noida">Noida</option>
+                <option value="Gurugram">Gurugram</option>
+                <option value="Ghaziabad">Ghaziabad</option>
+                <option value="Faridabad">Faridabad</option>
+            </select>
         </div>
 
+        <!-- Dynamic Extended Skill Fields for Taskers -->
         <div id="dynamicTaskerBox" class="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-4">
             <div>
                 <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-1">Core Capability Field</label>
-                <select name="skills" class="w-full p-3 rounded-xl border border-stone-300 bg-white font-medium outline-none">
+                <select name="skills" class="w-full p-3 rounded-xl border border-stone-300 bg-white font-medium outline-none cursor-pointer">
                     <option value="General Furniture Assembly">General Furniture Assembly</option>
                     <option value="IKEA Assembly">IKEA Furniture Assembly</option>
                     <option value="Minor Plumbing Repairs">Minor Plumbing Repairs</option>
@@ -51,15 +80,15 @@
         <div class="border-t border-stone-100 pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Email Address</label>
-                <input type="email" name="email" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+                <input type="email" name="email" required placeholder="name@domain.com" class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
             </div>
             <div>
                 <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">Security Password</label>
-                <input type="password" name="password" required class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+                <input type="password" name="password" required placeholder="••••••••" class="w-full p-3 border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
             </div>
         </div>
 
-        <button type="submit" class="w-full bg-[#1b4d3e] text-white font-black p-4 rounded-xl shadow-md hover:bg-emerald-900 transition tracking-wide text-sm mt-4">Complete Registration</button>
+        <button type="submit" class="w-full bg-[#1b4d3e] text-white font-black p-4 rounded-xl shadow-md hover:bg-emerald-900 transition tracking-wide text-sm mt-4 cursor-pointer">Complete Registration</button>
     </form>
 </div>
 
@@ -67,6 +96,38 @@
 function toggleFormContext() {
     const selector = document.getElementById('roleDropdown').value;
     document.getElementById('dynamicTaskerBox').style.display = (selector === 'Worker') ? 'block' : 'none';
+}
+
+// Global voice synthesis execution function
+function speakHindi(message) {
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel(); // Reset previous voice tracks
+    }
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.95;
+    
+    const voices = window.speechSynthesis.getVoices();
+    const targetVoice = voices.find(v => v.lang === 'hi-IN');
+    if (targetVoice) utterance.voice = targetVoice;
+    
+    window.speechSynthesis.speak(utterance);
+}
+
+// Custom Informal Script Reader
+function playRegistrationGuide() {
+    const role = document.getElementById('roleDropdown').value;
+    
+    if (role === 'Worker') {
+        speakHindi("हेलो यूजर, अगर आप काम ढूंढ रहे हैं, तो प्रोफाइल टाइप में वर्कर ही रहने दें। इसके बाद नीचे अपना पूरा नाम भरें, फिर अपना चालू मोबाइल नंबर डालें। इसके बाद अपना एरिया चुनें जहां आप काम करने जा सकते हैं। फिर अपना हुनर चुनें, और एक दिन की मजदूरी बताएं जो आप चाहते हैं। आखिरी में अपनी सही ईमेल आईडी डालें क्योंकि यह लॉग इन करने के लिए इस्तेमाल होगी, और एक मजबूत पासवर्ड बनाकर याद रखें ताकि बाद में कोई दिक्कत न हो।");
+    } else {
+        speakHindi("हेलो यूजर, अगर आप ठेकेदार या एम्प्लायर हैं और लेबर ढूंढ रहे हैं, तो प्रोफाइल टाइप में कॉन्ट्रैक्टर सेलेक्ट करें। इसके बाद नीचे अपना पूरा नाम भरें, फिर अपना चालू मोबाइल नंबर डालें। इसके बाद अपना वो एरिया चुनें जहां आपकी साइट या काम मौजूद है। आखिरी में अपनी सही ईमेल आईडी डालें जिससे आप लॉग इन कर सकें, और एक मजबूत पासवर्ड बनाकर याद रखें ताकि बाद में कोई परेशानी न आए।");
+    }
+}
+
+// Trigger initialization load buffer for external audio devices
+if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
 }
 </script>
 {% endblock %}
