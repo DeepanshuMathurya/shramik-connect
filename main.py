@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "rozgaar_production_secret_2026")
-DATABASE = 'database.db'
+DATABASE = 'database_v2.db'
 
 # Pre-defined Validated Delhi-NCR Transit Zone Hubs for Sandbox Location Protection
 VALID_LOCATIONS = [
