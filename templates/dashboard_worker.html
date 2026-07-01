@@ -3,7 +3,8 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     
     <div class="space-y-6">
-        <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
+        <!-- Profile Greeting Card with Hindi Voice Trigger -->
+        <div onmouseenter="speakHindi('राम राम, रोज़गार ऐप में आपका स्वागत है। यहाँ आप अपने पास के दैनिक कार्य ढूंढ सकते हैं।')" class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-12 h-12 rounded-full bg-emerald-100 text-[#1b4d3e] flex items-center justify-center text-xl font-black uppercase">
                     {{ user.name[0] }}
@@ -36,7 +37,8 @@
 
     <div class="lg:col-span-2 space-y-6">
         <div>
-            <h3 class="text-2xl font-black text-stone-900 tracking-tight">Book Trusted Help for Home Tasks</h3>
+            <!-- Section Header with Hindi Voice Trigger -->
+            <h3 onmouseenter="speakHindi('यह आपके आसपास के आज के कार्य हैं। विवरण ध्यान से सुनें।')" class="text-2xl font-black text-stone-900 tracking-tight">Book Trusted Help for Home Tasks</h3>
             <p class="text-sm text-stone-500 font-medium">Filtered active task listings looking for matching expertise right now</p>
         </div>
 
@@ -68,7 +70,12 @@
 
                 <div class="border-t border-stone-100 pt-4 mt-1 flex justify-between items-center">
                     <span class="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md"><i class="fa-solid fa-users"></i> {{ gig.workers_needed }} position openings</span>
-                    <a href="/apply_gig/{{ gig.id }}" class="bg-[#1b4d3e] text-white font-bold text-xs px-5 py-3 rounded-full shadow-xs hover:bg-emerald-900 transition flex items-center gap-1">Apply & Start Call <i class="fa-solid fa-chevron-right text-[10px]"></i></a>
+                    <!-- Swapped out static hyperlink for interactive simulation method trigger -->
+                    <button onclick="triggerOnStageIVR('{{ gig.title }}', '{{ gig.wage }}', '{{ gig.id }}')" 
+                            onmouseenter="speakHindi('इस काम के लिए आवेदन करने और पुष्टि कॉल शुरू करने के लिए इस बटन को दबाएं।')"
+                            class="bg-[#1b4d3e] text-white font-bold text-xs px-5 py-3 rounded-full shadow-xs hover:bg-emerald-900 transition flex items-center gap-1 cursor-pointer">
+                        Apply & Start Call <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </button>
                 </div>
             </div>
             {% endfor %}
@@ -102,4 +109,62 @@
         </div>
     </div>
 </div>
+
+<!-- ========================================== -->
+<!--       INTERACTIVE MODAL AUDIO SCRIPTS     -->
+<!-- ========================================== -->
+<audio id="phoneRingTone" src="https://assets.mixkit.co/active_storage/sfx/1359/1359-84.wav" loop></audio>
+
+<div id="ivrModalContainer" class="hidden fixed inset-0 bg-stone-900/80 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full border border-stone-200 text-center shadow-2xl">
+        <div class="w-16 h-16 bg-emerald-50 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce text-xl">
+            <i class="fa-solid fa-phone-incoming"></i>
+        </div>
+        <h3 id="ivrModalStatus" class="text-lg font-black text-stone-900">Incoming Outbound Call...</h3>
+        <p id="ivrModalTarget" class="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1">Simulating Network Routing</p>
+        
+        <div class="bg-stone-50 border p-4 rounded-xl my-4 text-sm font-medium text-stone-600 text-left space-y-1">
+            <p><strong>Task:</strong> <span id="ivrModalTask">Painting</span></p>
+            <p><strong>Payout:</strong> <span id="ivrModalWage">₹600</span></p>
+        </div>
+
+        <p class="text-xs font-bold text-amber-600 bg-amber-50 p-2 rounded border border-amber-200 mb-4 animate-pulse">
+            <i class="fa-solid fa-volume-high"></i> Listen closely to your computer speakers!
+        </p>
+
+        <button id="ivrConfirmButton" class="w-full bg-emerald-600 text-white font-black py-3 rounded-xl shadow-md hover:bg-emerald-700 transition tracking-wide text-xs uppercase cursor-pointer">
+            [1] Press 1 to Confirm Attendance
+        </button>
+    </div>
+</div>
+
+<script>
+function triggerOnStageIVR(title, wage, gigId) {
+    const modal = document.getElementById('ivrModalContainer');
+    const ring = document.getElementById('phoneRingTone');
+    
+    document.getElementById('ivrModalTask').innerText = title;
+    document.getElementById('ivrModalWage').innerText = "₹" + wage;
+    modal.classList.remove('hidden');
+    
+    ring.play();
+    document.getElementById('ivrModalStatus').innerText = "Ringing Worker Mobile...";
+    
+    setTimeout(() => {
+        ring.pause();
+        ring.currentTime = 0;
+        document.getElementById('ivrModalStatus').innerText = "📞 Call Answered (Live Audio Menu)";
+        speakHindi("नमस्कार। आपने " + title + " के लिए आवेदन किया है। अपनी उपस्थिति की पुष्टि करने के लिए नीचे दिए गए कीपैड पर एक नंबर बटन दबाएं।");
+    }, 3000);
+    
+    document.getElementById('ivrConfirmButton').onclick = function() {
+        speakHindi("धन्यवाद! आपकी उपस्थिति सफलतापूर्वक दर्ज कर ली गई है।");
+        document.getElementById('ivrModalStatus').innerText = "Verification Complete! Transmitting Data...";
+        
+        setTimeout(() => {
+            window.location.href = "/apply_gig/" + gigId;
+        }, 1500);
+    };
+}
+</script>
 {% endblock %}
