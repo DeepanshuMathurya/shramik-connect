@@ -68,5 +68,29 @@
         </div>
     </footer>
 
+<script>
+let currentUtterance = null;
+
+function speakHindi(message) {
+    // If the browser is already speaking, stop it first
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = 'hi-IN'; // Set voice channel to Hindi (India)
+    utterance.rate = 0.9;     // Speak slightly slower for absolute clarity
+    
+    // Find an Indian Hindi voice profile if available in the browser
+    const voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(voice => voice.lang === 'hi-IN');
+    if (hindiVoice) {
+        utterance.voice = hindiVoice;
+    }
+    
+    window.speechSynthesis.speak(utterance);
+}
+</script>
+    
 </body>
 </html>
