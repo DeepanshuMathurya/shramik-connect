@@ -2,9 +2,9 @@
 {% block content %}
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     
+    <!-- Left Hand Grid Pillar: Profile Summary Badge -->
     <div class="space-y-6">
-        <!-- Profile Greeting Card with Hindi Voice Trigger -->
-        <div onmouseenter="speakHindi('नमस्ते, रोज़गार ऐप में आपका स्वागत है। यहाँ आप अपने पास के दैनिक कार्य ढूंढ सकते हैं।')" class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
+        <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs relative">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-12 h-12 rounded-full bg-emerald-100 text-[#1b4d3e] flex items-center justify-center text-xl font-black uppercase">
                     {{ user.name[0] }}
@@ -17,6 +17,7 @@
             <div class="border-t border-stone-100 pt-3 space-y-2 text-sm font-semibold text-stone-600">
                 <p class="flex justify-between"><span>Core Skill:</span> <span class="text-stone-900">{{ user.skills }}</span></p>
                 <p class="flex justify-between"><span>Expected Rate:</span> <span class="text-emerald-700">₹{{ user.daily_rate }}/day</span></p>
+                <p class="flex justify-between"><span>My Base Hub:</span> <span id="workerBaseLocation" class="text-blue-700 font-bold">{{ user.location }}</span></p>
                 
                 <p class="flex justify-between items-center">
                     <span>Performance Rating:</span> 
@@ -25,6 +26,11 @@
                     </span>
                 </p>
             </div>
+
+            <!-- Dashboard Audio Walkthrough Trigger -->
+            <button type="button" onclick="playWorkerDashboardGuide()" class="w-full mt-4 bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-[11px] py-2 rounded-xl hover:bg-emerald-100 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-volume-high animate-pulse"></i> <span>डैशबोर्ड की जानकारी सुनें (Audio Guide)</span>
+            </button>
         </div>
 
         <div class="bg-stone-900 text-stone-300 p-5 rounded-2xl border border-stone-800 space-y-3">
@@ -35,10 +41,10 @@
         </div>
     </div>
 
+    <!-- Right Hand Grid Pillar: Core Interactive Task Marketplace Feed -->
     <div class="lg:col-span-2 space-y-6">
         <div>
-            <!-- Section Header with Hindi Voice Trigger -->
-            <h3 onmouseenter="speakHindi('यह आपके आसपास के आज के कार्य हैं। विवरण ध्यान से सुनें।')" class="text-2xl font-black text-stone-900 tracking-tight">Book Trusted Help for Home Tasks</h3>
+            <h3 class="text-2xl font-black text-stone-900 tracking-tight">Book Trusted Help for Home Tasks</h3>
             <p class="text-sm text-stone-500 font-medium">Filtered active task listings looking for matching expertise right now</p>
         </div>
 
@@ -64,16 +70,20 @@
 
                 <p class="text-sm text-stone-600 font-medium bg-stone-50 border border-stone-100 p-3.5 rounded-xl leading-relaxed">{{ gig.description }}</p>
 
-                <div class="flex items-center gap-2 text-xs font-bold text-stone-500">
-                    <i class="fa-solid fa-location-dot text-stone-400 text-sm"></i> <span>Worksite: {{ gig.location }}</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold text-stone-500 bg-stone-50/50 p-3 rounded-xl border border-stone-100">
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-location-dot text-stone-400 text-sm"></i> <span>Area: <span class="text-stone-800 task-hub-location">{{ gig.location }}</span></span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-day text-stone-400 text-sm"></i> <span>Date scheduled: <span class="text-blue-700">{{ gig.job_date }}</span></span>
+                    </div>
                 </div>
 
                 <div class="border-t border-stone-100 pt-4 mt-1 flex justify-between items-center">
                     <span class="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md"><i class="fa-solid fa-users"></i> {{ gig.workers_needed }} position openings</span>
-                    <!-- Swapped out static hyperlink for interactive simulation method trigger -->
-                    <button onclick="triggerOnStageIVR('{{ gig.title }}', '{{ gig.wage }}', '{{ gig.id }}')" 
-                            onmouseenter="speakHindi('इस काम के लिए आवेदन करने और पुष्टि कॉल शुरू करने के लिए इस बटन को दबाएं।')"
-                            class="bg-[#1b4d3e] text-white font-bold text-xs px-5 py-3 rounded-full shadow-xs hover:bg-emerald-900 transition flex items-center gap-1 cursor-pointer">
+                    
+                    <!-- Dynamic Intercept Trigger Mechanism -->
+                    <button type="button" onclick="evaluateDistanceAndRoute('{{ gig.title }}', '{{ gig.wage }}', '{{ gig.location }}', '{{ gig.id }}')" class="bg-[#1b4d3e] text-white font-bold text-xs px-5 py-3 rounded-full shadow-xs hover:bg-emerald-900 transition flex items-center gap-1 cursor-pointer">
                         Apply & Start Call <i class="fa-solid fa-chevron-right text-[10px]"></i>
                     </button>
                 </div>
@@ -81,13 +91,15 @@
             {% endfor %}
         </div>
 
+        <!-- Schedule Pipeline Tracking Section -->
         <h3 class="text-xl font-bold text-stone-900 tracking-tight pt-4 border-t border-stone-200"><i class="fa-solid fa-clock-history text-stone-400"></i> Active Task Schedule Progress Tracker</h3>
         <div class="space-y-3">
             {% for item in schedule %}
             <div class="bg-white border border-stone-200 p-4 rounded-xl shadow-xs flex justify-between items-center">
                 <div>
                     <h4 class="font-bold text-stone-900">{{ item.title }}</h4>
-                    <p class="text-xs text-stone-400 font-bold mt-0.5">Budget Allocation: ₹{{ item.wage }}</p>
+                    <p class="text-xs text-stone-500 font-medium mt-0.5"><i class="fa-solid fa-calendar-day"></i> Work Date: {{ item.job_date }}</p>
+                    <p class="text-[11px] text-stone-400 font-bold">Budget Allocation: ₹{{ item.wage }} | Site Address: {{ item.exact_address }}</p>
                     
                     {% if item.app_status == 'Confirmed' %}
                         <div class="mt-3 text-xs bg-emerald-50/50 text-emerald-900 border border-emerald-200 rounded-xl p-3 max-w-sm">
@@ -111,35 +123,92 @@
 </div>
 
 <!-- ========================================== -->
-<!--       INTERACTIVE MODAL AUDIO SCRIPTS     -->
+<!--     INTERACTIVE OVERLAY SYSTEM MODALS      -->
 <!-- ========================================== -->
+
+<!-- Ringtone Simulator -->
 <audio id="phoneRingTone" src="https://assets.mixkit.co/active_storage/sfx/1359/1359-84.wav" loop></audio>
 
+<!-- 1. Long Distance Confirmation Pop-up Overlay -->
+<div id="distanceModalContainer" class="hidden fixed inset-0 bg-stone-900/80 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full border border-stone-200 text-center shadow-2xl space-y-4">
+        <div class="w-12 h-12 bg-amber-50 text-amber-700 rounded-full flex items-center justify-center mx-auto text-lg"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <h3 class="text-lg font-black text-stone-900">Distance Alert / दूरी की चेतावनी</h3>
+        <p class="text-sm text-stone-600 font-medium leading-relaxed">यह काम आपके चुने हुए एरिया से दूर है। क्या आप सच में यहाँ जाने के लिए तैयार हैं?</p>
+        <div class="grid grid-cols-2 gap-3 pt-2">
+            <button id="distanceCancelBtn" class="bg-stone-100 text-stone-700 font-bold py-3 rounded-xl text-xs uppercase cursor-pointer">[0] नहीं चाहिए</button>
+            <button id="distanceConfirmBtn" class="bg-amber-600 text-white font-black py-3 rounded-xl text-xs uppercase cursor-pointer shadow-sm">[1] हाँ, जाना है</button>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Main Interactive IVR Simulated Telephone Call Overlay -->
 <div id="ivrModalContainer" class="hidden fixed inset-0 bg-stone-900/80 backdrop-blur-xs flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-3xl p-6 max-w-sm w-full border border-stone-200 text-center shadow-2xl">
-        <div class="w-16 h-16 bg-emerald-50 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce text-xl">
-            <i class="fa-solid fa-phone-incoming"></i>
-        </div>
+        <div class="w-16 h-16 bg-emerald-50 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce text-xl"><i class="fa-solid fa-phone-incoming"></i></div>
         <h3 id="ivrModalStatus" class="text-lg font-black text-stone-900">Incoming Outbound Call...</h3>
         <p id="ivrModalTarget" class="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1">Simulating Network Routing</p>
         
         <div class="bg-stone-50 border p-4 rounded-xl my-4 text-sm font-medium text-stone-600 text-left space-y-1">
-            <p><strong>Task:</strong> <span id="ivrModalTask">Painting</span></p>
-            <p><strong>Payout:</strong> <span id="ivrModalWage">₹600</span></p>
+            <p><strong>काम:</strong> <span id="ivrModalTask">Task</span></p>
+            <p><strong>मजदूरी:</strong> <span id="ivrModalWage">₹00</span></p>
         </div>
 
         <p class="text-xs font-bold text-amber-600 bg-amber-50 p-2 rounded border border-amber-200 mb-4 animate-pulse">
-            <i class="fa-solid fa-volume-high"></i> Listen closely to your computer speakers!
+            <i class="fa-solid fa-volume-high"></i> कंप्यूटर या फोन की आवाज़ चालू रखें!
         </p>
 
-        <button id="ivrConfirmButton" class="w-full bg-emerald-600 text-white font-black py-3 rounded-xl shadow-md hover:bg-emerald-700 transition tracking-wide text-xs uppercase cursor-pointer">
-            [1] Press 1 to Confirm Attendance
-        </button>
+        <!-- Upgraded Dual Response Keypad Array System -->
+        <div class="grid grid-cols-2 gap-3">
+            <button id="ivrDeclineKey" class="bg-rose-50 text-rose-800 border border-rose-200 font-bold py-3.5 rounded-xl text-xs uppercase cursor-pointer">
+                [0] Cancel / रद्द करें
+            </button>
+            <button id="ivrConfirmKey" class="bg-emerald-600 text-white font-black py-3.5 rounded-xl shadow-md hover:bg-emerald-700 transition tracking-wide text-xs uppercase cursor-pointer">
+                [1] Lock Work / कन्फर्म
+            </button>
+        </div>
     </div>
 </div>
 
 <script>
-function triggerOnStageIVR(title, wage, gigId) {
+function speakHindi(message) {
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.95;
+    window.speechSynthesis.speak(utterance);
+}
+
+function playWorkerDashboardGuide() {
+    speakHindi("हेलो यूजर, यह आपका डैशबोर्ड है। यहाँ नीचे आपको आज के सभी काम दिखाई देंगे। जिस काम को आप करना चाहते हैं, उसके नीचे दिए गए हरे बटन को दबाएं।");
+}
+
+function evaluateDistanceAndRoute(title, wage, gigLocation, gigId) {
+    const workerLoc = document.getElementById('workerBaseLocation').innerText.trim().toLowerCase();
+    const targetLoc = gigLocation.trim().toLowerCase();
+    
+    // Intercept with Distance Pop-up Modal if locations do not match
+    if (workerLoc !== targetLoc) {
+        const distModal = document.getElementById('distanceModalContainer');
+        distModal.classList.remove('hidden');
+        speakHindi("इस जॉब की लोकेशन आपके एरिया से दूर है। अगर आप काम पर जाना चाहते हैं तो एक दबाएं नहीं तो जीरो दबाएं।");
+        
+        document.getElementById('distanceConfirmBtn').onclick = function() {
+            distModal.classList.add('hidden');
+            launchIVRCallFlow(title, wage, gigId);
+        };
+        document.getElementById('distanceCancelBtn').onclick = function() {
+            distModal.classList.add('hidden');
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+        };
+    } else {
+        launchIVRCallFlow(title, wage, gigId);
+    }
+}
+
+function launchIVRCallFlow(title, wage, gigId) {
     const modal = document.getElementById('ivrModalContainer');
     const ring = document.getElementById('phoneRingTone');
     
@@ -148,22 +217,27 @@ function triggerOnStageIVR(title, wage, gigId) {
     modal.classList.remove('hidden');
     
     ring.play();
-    document.getElementById('ivrModalStatus').innerText = "Ringing Worker Mobile...";
+    document.getElementById('ivrModalStatus').innerText = "Ringing Your Mobile...";
     
     setTimeout(() => {
         ring.pause();
         ring.currentTime = 0;
-        document.getElementById('ivrModalStatus').innerText = "📞 Call Answered (Live Audio Menu)";
-        speakHindi("नमस्कार। आपने " + title + " के लिए आवेदन किया है। अपनी उपस्थिति की पुष्टि करने के लिए नीचे दिए गए कीपैड पर एक नंबर बटन दबाएं।");
-    }, 3000);
+        document.getElementById('ivrModalStatus').innerText = "📞 Call Active (Live Menu)";
+        speakHindi("नमस्कार। आपने " + title + " के लिए अप्लाई किया है। अपनी उपस्थिति पक्की करने के लिए एक दबाएं, वरना कैंसिल करने के लिए जीरो दबाएं।");
+    }, 2800);
     
-    document.getElementById('ivrConfirmButton').onclick = function() {
-        speakHindi("धन्यवाद! आपकी उपस्थिति सफलतापूर्वक दर्ज कर ली गई है।");
-        document.getElementById('ivrModalStatus').innerText = "Verification Complete! Transmitting Data...";
-        
-        setTimeout(() => {
-            window.location.href = "/apply_gig/" + gigId;
-        }, 1500);
+    // [1] Confirm Key Handle
+    document.getElementById('ivrConfirmKey').onclick = function() {
+        speakHindi("धन्यवाद! आपका काम पक्का हो गया है।");
+        document.getElementById('ivrModalStatus').innerText = "Confirmed! Syncing Server Data...";
+        setTimeout(() => { window.location.href = "/apply_gig/" + gigId; }, 1500);
+    };
+    
+    // [0] Decline Key Handle
+    document.getElementById('ivrDeclineKey').onclick = function() {
+        speakHindi("कॉल काट दी गई है और आपका आवेदन रद्द कर दिया गया है।");
+        document.getElementById('ivrModalStatus').innerText = "Call Declined by User.";
+        setTimeout(() => { modal.classList.add('hidden'); }, 1500);
     };
 }
 </script>
