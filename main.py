@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "rozgaar_production_secret_2026")
-DATABASE = 'database_v2.db'
+DATABASE = 'rozgaar_final_prod.db'
 
 # Pre-defined Validated Delhi-NCR Transit Zone Hubs for Sandbox Location Protection
 VALID_LOCATIONS = [
@@ -83,20 +83,42 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = generate_password_hash(request.form['password'])
-        role = request.form['role']
-        name = request.form['name']
-        phone = request.form['phone']
-        location = request.form['location'].strip().lower()
+  if request.method == 'POST':
+        email = request.form.get('email', '')
+        password = generate_password_hash(request.form.get('password', '1234'))
+        role = request.form.get('role', 'Worker')
+        name = request.form.get('name', 'Anonymous')
+        phone = request.form.get('phone', '0000000000')
+        
+        # Safe lookup for location dropdown
+        raw_location = request.form.get('location', 'Badarpur')
+        location = raw_location.strip().lower()
+        
         skills = request.form.get('skills', 'General Assembly')
         daily_rate = request.form.get('daily_rate', 450)
+        
+        # Fallback if location field comes empty
+        if not location:
+            location = "badarpur"
+            raw_location = "Badarpur"
         
         # Location Validation Barrier Check
         is_valid = any(zone in location for zone in VALID_LOCATIONS)
         if not is_valid:
-            flash("Error: Please enter a valid location within Delhi-NCR area for the system sandbox deployment.", "danger")
+            flash("Error: Please enter a valid location within Delhi-NCR area.", "danger")
+            return redirect(url_for('register'))
+        
+        try:
+            with get_db() as conn:
+                conn.execute('''
+                    INSERT INTO users (email, password, role, name, phone, location, skills, daily_rate, rating)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 5.0)
+                ''', (email, password, role, name, phone, raw_location, skills, daily_rate))
+                conn.commit()
+            flash("Account registered successfully! Please sign in.", "success")
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash("This email address is already in use.", "danger")
             return redirect(url_for('register'))
         
         try:
