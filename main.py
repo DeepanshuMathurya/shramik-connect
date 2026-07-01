@@ -7,6 +7,14 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "rozgaar_production_secret_2026")
 DATABASE = 'database.db'
 
+# Pre-defined Validated Delhi-NCR Transit Zone Hubs for Sandbox Location Protection
+VALID_LOCATIONS = [
+    "badarpur", "sarita vihar", "jasola", "okhla", "nehru place", 
+    "kashmere gate", "shastri park", "seelampur", "shahdara", 
+    "dilshad garden", "connaught place", "saket", "dwarka", "rohini",
+    "delhi", "new delhi", "noida", "gurugram", "ghaziabad", "faridabad"
+]
+
 def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
@@ -14,7 +22,7 @@ def get_db():
 
 def init_db():
     with get_db() as conn:
-        # Extended Users Table with Rating metrics
+        # Extended Users Table
         conn.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +39,7 @@ def init_db():
                 available INTEGER DEFAULT 1
             )
         ''')
-        # Gigs Table
+        # Gigs Table containing specialized Job Dates and Address details
         conn.execute('''
             CREATE TABLE IF NOT EXISTS gigs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,11 +50,13 @@ def init_db():
                 wage REAL NOT NULL,
                 workers_needed INTEGER NOT NULL,
                 location TEXT NOT NULL,
+                exact_address TEXT,
+                job_date TEXT NOT NULL,
                 status TEXT DEFAULT 'Open',
                 FOREIGN KEY (contractor_id) REFERENCES users (id)
             )
         ''')
-        # Applications Table with IVR Verification status
+        # Applications Table
         conn.execute('''
             CREATE TABLE IF NOT EXISTS applications (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,27 +73,12 @@ def init_db():
 
 init_db()
 
-# --- Dynamic Alert Simulations for Hackathon Judges ---
-def simulate_whatsapp_alert(phone_number, text_message):
-    print(f"\n[🟢 WHATSAPP SIMULATION ALERT OUTBOUND]")
-    print(f"Target Line: {phone_number}")
-    print(f"Payload: {text_message}\n")
-
-def simulate_ivr_voice_call(phone_number, worker_name, gig_title):
-    print(f"\n[📞 IVR AUTOMATED PHONE CALL ENGINE TRACE]")
-    print(f"Dialing Worker: {worker_name} at ({phone_number})")
-    print(f"Audio Output: 'You applied for {gig_title}. Press 1 to lock your attendance...'")
-    print(f"Status Response Received: Keypad Digit 1 [CONFIRMED]\n")
-
 # --- Routes ---
 
 @app.route('/')
 def index():
-    # If a user is already logged in, send them to their dashboard
     if 'user_id' in session:
         return redirect(url_for('dashboard'))
-    
-    # Otherwise, show the beautiful TaskRabbit-style informational homepage
     return render_template('home.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -94,16 +89,22 @@ def register():
         role = request.form['role']
         name = request.form['name']
         phone = request.form['phone']
-        location = request.form['location']
+        location = request.form['location'].strip().lower()
         skills = request.form.get('skills', 'General Assembly')
         daily_rate = request.form.get('daily_rate', 450)
+        
+        # Location Validation Barrier Check
+        is_valid = any(zone in location for zone in VALID_LOCATIONS)
+        if not is_valid:
+            flash("Error: Please enter a valid location within Delhi-NCR area for the system sandbox deployment.", "danger")
+            return redirect(url_for('register'))
         
         try:
             with get_db() as conn:
                 conn.execute('''
                     INSERT INTO users (email, password, role, name, phone, location, skills, daily_rate, rating)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 5.0)
-                ''', (email, password, role, name, phone, location, skills, daily_rate))
+                ''', (email, password, role, request.form['location'], skills, daily_rate))
                 conn.commit()
             flash("Account registered successfully! Please sign in.", "success")
             return redirect(url_for('login'))
@@ -149,10 +150,8 @@ def dashboard():
         
     if user['role'] == 'Contractor':
         gigs = conn.execute('SELECT * FROM gigs WHERE contractor_id = ? ORDER BY id DESC', (user['id'],)).fetchall()
-        
-        # HACKATHON RATING REFACTORING: Order incoming job applicants by their performance rating (highest first)
         apps = conn.execute('''
-            SELECT a.id as app_id, a.status as app_status, a.ivr_confirmed, g.title, 
+            SELECT a.id as app_id, a.status as app_status, a.ivr_confirmed, g.title, g.job_date,
                    u.name as worker_name, u.phone as worker_phone, u.skills, u.rating as worker_rating, g.id as gig_id
             FROM applications a
             JOIN gigs g ON a.gig_id = g.id
@@ -160,12 +159,10 @@ def dashboard():
             WHERE g.contractor_id = ? AND a.status = 'IVR Confirmed'
             ORDER BY u.rating DESC
         ''', (user['id'],)).fetchall()
-        
         conn.close()
         return render_template('dashboard_contractor.html', user=user, gigs=gigs, applications=apps)
     
-    else: # Worker Interface
-        # Fetch open jobs
+    else: # Worker Dashboard
         available_gigs = conn.execute('''
             SELECT g.*, u.name as contractor_name, u.phone as contractor_phone 
             FROM gigs g 
@@ -195,13 +192,21 @@ def post_gig():
     desc = request.form['description']
     wage = request.form['wage']
     workers = request.form['workers_needed']
-    loc = request.form['location']
+    loc = request.form['location'].strip().lower()
+    exact_address = request.form['exact_address']
+    job_date = request.form['job_date'] # Retains selected calendar execution date
+    
+    # Location Barrier Filter Validation
+    is_valid = any(zone in loc for zone in VALID_LOCATIONS)
+    if not is_valid:
+        flash("Error: Job location must be situated within valid regional tracking bounds.", "danger")
+        return redirect(url_for('dashboard'))
     
     with get_db() as conn:
         conn.execute('''
-            INSERT INTO gigs (contractor_id, title, skill_required, description, wage, workers_needed, location)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (session['user_id'], title, skill, desc, wage, workers, loc))
+            INSERT INTO gigs (contractor_id, title, skill_required, description, wage, workers_needed, location, exact_address, job_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (session['user_id'], title, skill, desc, wage, workers, request.form['location'], exact_address, job_date))
         conn.commit()
     flash("New task listed on the active marketplace!", "success")
     return redirect(url_for('dashboard'))
@@ -211,27 +216,28 @@ def apply_gig(gig_id):
     if session.get('role') != 'Worker': return redirect(url_for('dashboard'))
     
     conn = get_db()
-    gig = conn.execute('SELECT * FROM gigs WHERE id = ?', (gig_id,)).fetchone()
-    worker = conn.execute('SELECT * FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+    target_gig = conn.execute('SELECT * FROM gigs WHERE id = ?', (gig_id,)).fetchone()
+    
+    # --- DOUBLE BOOKING BLOCKING ENGINE MECHANICAL LAYER ---
+    # Look up if this worker already has a slot locked or pending on this exact calendar target date
+    conflict = conn.execute('''
+        SELECT g.title, g.job_date 
+        FROM applications a
+        JOIN gigs g ON a.gig_id = g.id
+        WHERE a.worker_id = ? AND g.job_date = ? AND a.status != 'Rejected'
+    ''', (session['user_id'], target_gig['job_date'])).fetchone()
+    
+    if conflict:
+        conn.close()
+        flash(f"Aap is din pe pehle se dusre kaam par apply kar chuke hain! Ek hi date par do kaam nahi chun sakte.", "danger")
+        return redirect(url_for('dashboard'))
     
     try:
-        # Step 1: Submit data state as pending validation
-        conn.execute('INSERT INTO applications (gig_id, worker_id, status, ivr_confirmed) VALUES (?, ?, "IVR Pending", 0)', (gig_id, session['user_id']))
+        conn.execute('INSERT INTO applications (gig_id, worker_id, status, ivr_confirmed) VALUES (?, ?, "IVR Confirmed", 1)', (gig_id, session['user_id']))
         conn.commit()
-        
-        # Step 2: Instant Double-Confirmation IVR Phone Call Simulation 
-        simulate_ivr_voice_call(worker['phone'], worker['name'], gig['title'])
-        
-        # Step 3: Fast-forward state to verified after successful simulation response loop
-        conn.execute('UPDATE applications SET status = "IVR Confirmed", ivr_confirmed = 1 WHERE gig_id = ? AND worker_id = ?', (gig_id, session['user_id']))
-        conn.commit()
-        
-        # Step 4: Outbound WhatsApp Tracking Confirmation Alert
-        simulate_whatsapp_alert(worker['phone'], f"Namaste {worker['name']}, you have successfully applied for '{gig['title']}' after confirming via our IVR Call verification system. Your entry is now visible to the employer!")
-        
-        flash("Application submitted! Check system terminal to view active IVR Voice Call verification simulation pipelines.", "success")
+        flash("Application confirmed successfully!", "success")
     except sqlite3.IntegrityError:
-        flash("You have already initiated an application status for this entry.", "warning")
+        flash("You have already applied for this job.", "warning")
     finally:
         conn.close()
         
@@ -240,33 +246,15 @@ def apply_gig(gig_id):
 @app.route('/handle_applicant/<int:app_id>/<string:action>')
 def handle_applicant(app_id, action):
     if session.get('role') != 'Contractor': return redirect(url_for('dashboard'))
-    
     status = 'Confirmed' if action == 'accept' else 'Rejected'
     
     with get_db() as conn:
         conn.execute('UPDATE applications SET status = ? WHERE id = ?', (status, app_id))
-        
-        # Gather information to handle real-time notification alerts
-        target_info = conn.execute('''
-            SELECT u.phone as worker_phone, u.name as worker_name, g.title 
-            FROM applications a
-            JOIN users u ON a.worker_id = u.id
-            JOIN gigs g ON a.gig_id = g.id
-            WHERE a.id = ?
-        ''', (app_id,)).fetchone()
-        
-        if status == 'Confirmed' and target_info:
+        if status == 'Confirmed':
             conn.execute('UPDATE gigs SET workers_needed = MAX(0, workers_needed - 1) WHERE id = (SELECT gig_id FROM applications WHERE id = ?)', (app_id,))
-            
-            # Simulate acceptance WhatsApp trigger notification context
-            simulate_whatsapp_alert(
-                target_info['worker_phone'], 
-                f"Badhai Ho {target_info['worker_name']}! Your application for '{target_info['title']}' has been ACCEPTED. Open your ROZGAAR dashboard to view the contractor's contact details."
-            )
-            
         conn.commit()
         
-    flash(f"Application choice processed as: {status}!", "success")
+    flash(f"Application choice processed successfully!", "success")
     return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
