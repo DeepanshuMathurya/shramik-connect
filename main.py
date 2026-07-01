@@ -83,7 +83,7 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-  if request.method == 'POST':
+    if request.method == 'POST':
         email = request.form.get('email', '')
         password = generate_password_hash(request.form.get('password', '1234'))
         role = request.form.get('role', 'Worker')
@@ -107,6 +107,21 @@ def register():
         if not is_valid:
             flash("Error: Please enter a valid location within Delhi-NCR area.", "danger")
             return redirect(url_for('register'))
+        
+        try:
+            with get_db() as conn:
+                conn.execute('''
+                    INSERT INTO users (email, password, role, name, phone, location, skills, daily_rate, rating)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 5.0)
+                ''', (email, password, role, name, phone, raw_location, skills, daily_rate))
+                conn.commit()
+            flash("Account registered successfully! Please sign in.", "success")
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash("This email address is already in use.", "danger")
+            return redirect(url_for('register'))
+            
+    return render_template('register.html')
         
         try:
             with get_db() as conn:
