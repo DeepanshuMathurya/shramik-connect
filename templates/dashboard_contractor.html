@@ -2,19 +2,29 @@
 {% block content %}
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     
+    <!-- Left Hand Form Component Column -->
     <div class="space-y-6">
         <div class="bg-white border border-stone-200 rounded-3xl p-6 shadow-md relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1.5 bg-[#1b4d3e]"></div>
-            <h3 class="text-xl font-black text-stone-900 tracking-tight mb-4 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-[#1b4d3e]"></i> Post a Task</h3>
+            
+            <div class="text-center mb-4">
+                <h3 class="text-xl font-black text-stone-900 tracking-tight flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-[#1b4d3e]"></i> नया काम पोस्ट करें
+                </h3>
+                <!-- Mobile-Friendly Play Help Button -->
+                <button type="button" onclick="playContractorGuide()" class="mt-2 bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-[10px] px-3 py-1.5 rounded-full hover:bg-emerald-100 transition flex items-center gap-1 mx-auto cursor-pointer">
+                    <i class="fa-solid fa-volume-high animate-pulse"></i> <span>काम कैसे पोस्ट करें (सुनें)</span>
+                </button>
+            </div>
             
             <form action="/post_gig" method="POST" class="space-y-3.5">
                 <div>
-                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Task Name</label>
-                    <input type="text" name="title" placeholder="e.g., IKEA Bookshelf Assembly" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">काम का नाम (Task Title)</label>
+                    <input type="text" name="title" placeholder="जैसे: फर्नीचर असेंबली, प्लंबिंग काम" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Task Category</label>
-                    <select name="skill_required" class="w-full p-3 border border-stone-300 rounded-xl bg-white text-sm outline-none">
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">काम की कैटेगरी (Category)</label>
+                    <select name="skill_required" class="w-full p-3 border border-stone-300 rounded-xl bg-white text-sm outline-none cursor-pointer">
                         <option value="General Furniture Assembly">General Furniture Assembly</option>
                         <option value="IKEA Assembly">IKEA Furniture Assembly</option>
                         <option value="Minor Plumbing Repairs">Minor Plumbing Repairs</option>
@@ -23,31 +33,60 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Budget Target (₹)</label>
+                        <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">एक दिन की मजदूरी (₹)</label>
                         <input type="number" name="wage" placeholder="600" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Quantity Needed</label>
+                        <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">कितने मजदूर चाहिए</label>
                         <input type="number" name="workers_needed" placeholder="1" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Work Site Address</label>
-                    <input type="text" name="location" placeholder="Street Name, Area, City" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none">
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">काम का मुख्य एरिया (Select Hub Area)</label>
+                    <select name="location" required class="w-full p-3 border border-stone-300 bg-white rounded-xl outline-none text-sm cursor-pointer">
+                        <option value="" disabled selected>एरिया चुनें...</option>
+                        <option value="Badarpur">Badarpur</option>
+                        <option value="Sarita Vihar">Sarita Vihar</option>
+                        <option value="Jasola">Jasola</option>
+                        <option value="Okhla">Okhla</option>
+                        <option value="Nehru Place">Nehru Place</option>
+                        <option value="Kashmere Gate">Kashmere Gate</option>
+                        <option value="Shastri Park">Shastri Park</option>
+                        <option value="Seelampur">Seelampur</option>
+                        <option value="Shahdara">Shahdara</option>
+                        <option value="Dilshad Garden">Dilshad Garden</option>
+                        <option value="Connaught Place">Connaught Place</option>
+                        <option value="Saket">Saket</option>
+                        <option value="Dwarka">Dwarka</option>
+                        <option value="Rohini">Rohini</option>
+                        <option value="Noida">Noida</option>
+                        <option value="Gurugram">Gurugram</option>
+                        <option value="Ghaziabad">Ghaziabad</option>
+                        <option value="Faridabad">Faridabad</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">Instructions / Description</label>
-                    <textarea name="description" rows="2" placeholder="Briefly detail specialized tool requirements..." class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none"></textarea>
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">साइट का पूरा पता (Street No., House, Mark)</label>
+                    <input type="text" name="exact_address" placeholder="जैसे: दुकान नंबर 4, गली नंबर 2, बदरपुर मार्केट" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e]">
                 </div>
-                <button type="submit" class="w-full bg-[#1b4d3e] text-white font-bold py-3.5 rounded-xl shadow-xs hover:bg-emerald-900 transition tracking-wide text-xs uppercase">Post Active Listing</button>
+                <div>
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">काम की तारीख (Select Date)</label>
+                    <input type="date" name="job_date" required class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none focus:border-[#1b4d3e] cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-1">मजदूरों के लिए निर्देश</label>
+                    <textarea name="description" rows="2" placeholder="जैसे: अपने साथ औजार लेकर आएं..." class="w-full p-3 text-sm border border-stone-300 rounded-xl outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-[#1b4d3e] text-white font-bold py-3.5 rounded-xl shadow-xs hover:bg-emerald-900 transition tracking-wide text-xs uppercase cursor-pointer">काम पोस्ट करें</button>
             </form>
         </div>
     </div>
 
+    <!-- Right Hand Applicants Routing Column -->
     <div class="lg:col-span-2 space-y-6">
         <div>
             <h2 class="text-2xl font-black text-stone-900 tracking-tight">Active Inbound Applicants</h2>
-            <p class="text-xs text-stone-500 font-bold uppercase tracking-wider text-emerald-700 mt-0.5"><i class="fa-solid fa-bolt"></i> Refactored Priority Engine: Highest-Rated Taskers are auto-sorted to the top</p>
+            <p class="text-xs text-stone-500 font-bold uppercase tracking-wider text-emerald-700 mt-0.5"><i class="fa-solid fa-bolt"></i> Priority Engine: Highest-Rated Taskers are auto-sorted to the top</p>
         </div>
 
         <div class="space-y-3">
@@ -72,25 +111,28 @@
                     </div>
                     <p class="text-xs text-stone-500 font-medium mt-1">Applying for job profile: <span class="text-stone-800 font-bold">{{ app.title }}</span></p>
                     <p class="text-xs text-blue-600 font-bold mt-0.5">Primary Capability: {{ app.skills }}</p>
+                    <p class="text-xs text-stone-600 font-semibold mt-0.5"><i class="fa-solid fa-calendar-day"></i> Job Date Scheduled: {{ app.job_date }}</p>
                     
                     {% if app.ivr_confirmed == 1 %}
                     <span class="inline-block mt-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md"><i class="fa-solid fa-phone-volume"></i> Verified via Outbound IVR System Call</span>
                     {% endif %}
                 </div>
                 <div class="flex gap-2">
-                    <a href="/handle_applicant/{{ app.app_id }}/accept" class="bg-emerald-700 text-white p-2.5 px-4 rounded-full font-bold text-xs hover:bg-emerald-900 transition shadow-xs">Accept Option</a>
-                    <a href="/handle_applicant/{{ app.app_id }}/reject" class="bg-stone-100 text-stone-600 p-2.5 px-4 rounded-full font-bold text-xs hover:bg-stone-200 transition">Skip</a>
+                    <a href="/handle_applicant/{{ app.app_id }}/accept" class="bg-emerald-700 text-white p-2.5 px-4 rounded-full font-bold text-xs hover:bg-emerald-900 transition shadow-xs whitespace-nowrap">Accept Option</a>
+                    <a href="/handle_applicant/{{ app.app_id }}/reject" class="bg-stone-100 text-stone-600 p-2.5 px-4 rounded-full font-bold text-xs hover:bg-stone-200 transition whitespace-nowrap">Skip</a>
                 </div>
             </div>
             {% endfor %}
         </div>
 
+        <!-- Historic Job Posting Index Logs -->
         <h3 class="text-lg font-bold text-stone-900 tracking-tight pt-4 border-t border-stone-200"><i class="fa-solid fa-folder-open text-stone-400"></i> Active Tasking History</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {% for gig in gigs %}
             <div class="bg-white border border-stone-200 p-4 rounded-xl shadow-xs">
                 <h4 class="font-bold text-stone-900 text-sm">{{ gig.title }}</h4>
-                <p class="text-xs text-stone-400 font-bold mt-1"><i class="fa-solid fa-location-dot"></i> {{ gig.location }}</p>
+                <p class="text-xs text-stone-400 font-bold mt-1"><i class="fa-solid fa-calendar-day"></i> Date: {{ gig.job_date }}</p>
+                <p class="text-xs text-stone-500 font-medium mt-0.5"><i class="fa-solid fa-location-dot"></i> {{ gig.location }} ({{ gig.exact_address }})</p>
                 <div class="mt-3 flex justify-between items-center text-[11px] font-bold">
                     <span class="text-stone-500">Allocation Goal: {{ gig.workers_needed }} spot(s)</span>
                     <span class="{% if gig.status == 'Open' %}text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded{% else %}text-stone-500 bg-stone-100 px-2 py-0.5 rounded{% endif %} uppercase tracking-wider">{{ gig.status }}</span>
@@ -100,4 +142,20 @@
         </div>
     </div>
 </div>
+
+<script>
+function speakHindi(message) {
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.95;
+    window.speechSynthesis.speak(utterance);
+}
+
+function playContractorGuide() {
+    speakHindi("हेलो यूजर, नया काम पोस्ट करने के लिए सबसे पहले काम का नाम भरें। इसके बाद काम की कैटेगरी चुनें। फिर एक दिन की मजदूरी और कितने मजदूर चाहिए वो संख्या डालें। इसके बाद काम का मुख्य एरिया चुनें और नीचे साइट का पूरा पता जैसे गली नंबर या मकान नंबर साफ-साफ लिखें। आखिरी में कैलेंडर से काम की तारीख चुनें और नीचे दिए गए काले बटन को दबाकर काम लाइव कर दें।");
+}
+</script>
 {% endblock %}
